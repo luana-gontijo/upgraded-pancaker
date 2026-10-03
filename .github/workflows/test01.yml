@@ -1,8 +1,8 @@
-name: Mirror Upstream (Force Except Workflows + Index + Posts + Ads)
+name: Mirror Upstream (Force Except Workflows + Index + Posts)
 
 on:
   schedule:
-    - cron: "0 11 * * *"
+    - cron: "0 3 * * *"
   workflow_dispatch:
 
 permissions:
@@ -43,16 +43,10 @@ jobs:
             cp -r _posts /tmp/backup/
           fi
 
-          # Backup _includes/ads
-          if [ -d "_includes/ads" ]; then
-            mkdir -p /tmp/backup/_includes
-            cp -r _includes/ads /tmp/backup/_includes/
-          fi
-
       - name: Add upstream
         run: |
           git remote remove upstream || true
-          git remote add upstream https://github.com/nengmaya538/nengmaya538.github.io.git
+          git remote add upstream https://github.com/yusierni7/sub-nakap.git
           git fetch upstream
 
       - name: Hard reset to upstream
@@ -81,16 +75,8 @@ jobs:
             cp -r /tmp/backup/_posts _posts
           fi
 
-          # Restore _includes/ads
-          rm -rf _includes/ads
-
-          if [ -d "/tmp/backup/_includes/ads" ]; then
-            mkdir -p _includes
-            cp -r /tmp/backup/_includes/ads _includes/
-          fi
-
       - name: Force push to fork
         run: |
           git add .
-          git commit -m "Force sync except workflows, index.html, _posts and _includes/ads" || echo "No changes"
+          git commit -m "Force sync except workflows, index.html and _posts" || echo "No changes"
           git push origin master --force
